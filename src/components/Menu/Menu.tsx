@@ -583,7 +583,12 @@ class Menu extends React.Component<Props, State> {
                 accessibilityRole="button"
                 onPress={onDismiss}
               >
-                <View style={StyleSheet.absoluteFill} />
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: theme.colors.backdrop },
+                  ]}
+                />
               </TouchableWithoutFeedback>
             ) : undefined}
             <View
