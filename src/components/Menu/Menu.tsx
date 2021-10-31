@@ -1,5 +1,4 @@
 import * as React from 'react';
-import type { ComponentProps } from 'react';
 import {
   Platform,
   StyleProp,
@@ -46,14 +45,6 @@ type Props = {
    */
   onDismiss: () => void;
   /**
-   * Whether the `anchor` should be focused when `onDimiss` has finished animating
-   */
-  focusAnchorOnDismiss?: boolean;
-  /**
-   * Whether the `anchor` should be focused when `onDimiss` has finished animating
-   */
-  focusSurfaceOnShown?: boolean;
-  /**
    * Accessibility label for the overlay. This is read by the screen reader when the user taps outside the menu.
    */
   overlayAccessibilityLabel?: string;
@@ -70,14 +61,6 @@ type Props = {
    * @optional
    */
   theme: ReactNativePaper.Theme;
-  /**
-   * Whether to use the overlay that is rendered behind the Surface and dismisses the Surface `onPress`
-   */
-  overlay?: boolean;
-  /**
-   * Additional props to add to the `Surface`
-   */
-  surfaceProps?: Partial<ComponentProps<typeof Surface>>;
 };
 
 type Layout = $Omit<$Omit<LayoutRectangle, 'x'>, 'y'>;
@@ -344,8 +327,7 @@ class Menu extends React.Component<Props, State> {
             useNativeDriver: true,
           }),
         ]).start(({ finished }) => {
-          const focusSurfaceOnShown = this.props.focusSurfaceOnShown ?? true;
-          if (focusSurfaceOnShown && finished) {
+          if (finished) {
             this.focusFirstDOMNode(this.menu);
           }
         });
@@ -366,9 +348,7 @@ class Menu extends React.Component<Props, State> {
       if (finished) {
         this.setState({ menuLayout: { width: 0, height: 0 }, rendered: false });
         this.state.scaleAnimation.setValue({ x: 0, y: 0 });
-        if (this.props.focusAnchorOnDismiss ?? true) {
-          this.focusFirstDOMNode(this.anchor);
-        }
+        this.focusFirstDOMNode(this.anchor);
       }
     });
   };
@@ -385,8 +365,6 @@ class Menu extends React.Component<Props, State> {
       onDismiss,
       overlayAccessibilityLabel,
     } = this.props;
-
-    const overlay = this.props.overlay ?? true;
 
     const {
       rendered,
@@ -577,20 +555,18 @@ class Menu extends React.Component<Props, State> {
         {this.isCoordinate(anchor) ? null : anchor}
         {rendered ? (
           <Portal>
-            {overlay ? (
-              <TouchableWithoutFeedback
-                accessibilityLabel={overlayAccessibilityLabel}
-                accessibilityRole="button"
-                onPress={onDismiss}
-              >
-                <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    { backgroundColor: theme.colors.backdrop },
-                  ]}
-                />
-              </TouchableWithoutFeedback>
-            ) : undefined}
+            <TouchableWithoutFeedback
+              accessibilityLabel={overlayAccessibilityLabel}
+              accessibilityRole="button"
+              onPress={onDismiss}
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: theme.colors.backdrop },
+                ]}
+              />
+            </TouchableWithoutFeedback>
             <View
               ref={(ref) => {
                 this.menu = ref;
@@ -601,19 +577,13 @@ class Menu extends React.Component<Props, State> {
               pointerEvents={visible ? 'box-none' : 'none'}
               onAccessibilityEscape={onDismiss}
             >
-              <Animated.View
-                pointerEvents="none"
-                style={{ transform: positionTransforms }}
-              >
+              <Animated.View style={{ transform: positionTransforms }}>
                 <Surface
-                  pointerEvents="auto"
-                  {...this.props.surfaceProps}
                   style={
                     [
                       styles.shadowMenuContainer,
                       shadowMenuContainerStyle,
                       contentStyle,
-                      this.props.surfaceProps?.style,
                     ] as StyleProp<ViewStyle>
                   }
                 >
