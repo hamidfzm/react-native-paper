@@ -76,7 +76,7 @@ type State = {
 };
 
 // Minimum padding between the edge of the screen and the menu
-const SCREEN_INDENT = 8;
+const SCREEN_INDENT = 0;
 // From https://material.io/design/motion/speed.html#duration
 const ANIMATION_DURATION = 250;
 // From the 'Standard easing' section of https://material.io/design/motion/speed.html#easing
