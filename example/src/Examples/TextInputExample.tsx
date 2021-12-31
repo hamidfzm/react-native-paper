@@ -1,10 +1,21 @@
 import * as React from 'react';
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+} from 'react-native';
 import { TextInput, HelperText, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { inputReducer, State } from '../../utils';
 import ScreenWrapper from '../ScreenWrapper';
-import { amber900, pink400, transparent } from '../../../src/styles/colors';
+import {
+  amber900,
+  pink400,
+  red500,
+  transparent,
+} from '../../../src/styles/colors';
 
 const MAX_LENGTH = 20;
 
@@ -18,6 +29,7 @@ const initialState: State = {
   outlinedLargeText: '',
   outlinedTextPassword: '',
   nameNoPadding: '',
+  nameRequired: '',
   flatDenseText: '',
   flatDense: '',
   outlinedDenseText: '',
@@ -28,6 +40,7 @@ const initialState: State = {
   outlinedMultiline: '',
   outlinedTextArea: '',
   outlinedColors: '',
+  outlinedLongLabel: '',
   maxLengthName: '',
   flatTextSecureEntry: true,
   outlineTextSecureEntry: true,
@@ -70,6 +83,7 @@ const TextInputExample = () => {
     outlinedLargeText,
     outlinedTextPassword,
     nameNoPadding,
+    nameRequired,
     flatDenseText,
     flatDense,
     outlinedDenseText,
@@ -391,6 +405,15 @@ const TextInputExample = () => {
           outlineColor={pink400}
           activeOutlineColor={amber900}
         />
+        <TextInput
+          mode="outlined"
+          style={styles.inputContainerStyle}
+          label="Outlined with super long label which is truncating at some point"
+          placeholder="Type something"
+          onChangeText={(outlinedLongLabel) =>
+            inputActionHandler('outlinedLongLabel', outlinedLongLabel)
+          }
+        />
         <View style={styles.inputContainerStyle}>
           <TextInput
             label="Input with helper text"
@@ -448,6 +471,25 @@ const TextInputExample = () => {
         </View>
         <View style={styles.inputContainerStyle}>
           <TextInput
+            label={
+              <Text>
+                <Text style={{ color: red500 }}>*</Text> Label as component
+              </Text>
+            }
+            style={styles.noPaddingInput}
+            placeholder="Enter username, required"
+            value={nameRequired}
+            error={!nameRequired}
+            onChangeText={(nameRequired) =>
+              inputActionHandler('nameRequired', nameRequired)
+            }
+          />
+          <HelperText type="error" padding="none" visible={!nameRequired}>
+            Error: Username is required
+          </HelperText>
+        </View>
+        <View style={styles.inputContainerStyle}>
+          <TextInput
             label="Input with text align center"
             style={styles.centeredText}
           />
@@ -465,7 +507,37 @@ const TextInputExample = () => {
             theme={{
               roundness: 25,
             }}
-            label="Custom rounded input"
+            label="Outlined text input with custom roundness"
+          />
+        </View>
+        <View style={styles.inputContainerStyle}>
+          <TextInput
+            mode="outlined"
+            label="Outlined text input without roundness"
+            theme={{ roundness: 0 }}
+          />
+        </View>
+        <View style={styles.inputContainerStyle}>
+          <TextInput
+            mode="outlined"
+            label="Outlined text input with error"
+            error
+          />
+        </View>
+        <View style={styles.inputContainerStyle}>
+          <TextInput
+            mode="outlined"
+            label="Outlined multiline text input with fixed height"
+            multiline
+            style={styles.fixedHeight}
+          />
+        </View>
+        <View style={styles.inputContainerStyle}>
+          <TextInput
+            mode="flat"
+            label="Flat multiline text input with fixed height"
+            multiline
+            style={styles.fixedHeight}
           />
         </View>
       </ScreenWrapper>
@@ -507,6 +579,9 @@ const styles = StyleSheet.create({
   },
   centeredText: {
     textAlign: 'center',
+  },
+  fixedHeight: {
+    height: 100,
   },
 });
 
