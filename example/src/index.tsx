@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I18nManager, Platform } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import { Updates } from 'expo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Updates from 'expo-updates';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
 import { InitialState, NavigationContainer } from '@react-navigation/native';
@@ -70,7 +70,7 @@ const CustomDefaultTheme = {
   },
 };
 
-const PreferencesContext = React.createContext<any>(null);
+export const PreferencesContext = React.createContext<any>(null);
 
 const DrawerContent = () => {
   return (
@@ -97,9 +97,8 @@ export default function PaperExample() {
     InitialState | undefined
   >();
 
-  const [theme, setTheme] = React.useState<ReactNativePaper.Theme>(
-    CustomDefaultTheme
-  );
+  const [theme, setTheme] =
+    React.useState<ReactNativePaper.Theme>(CustomDefaultTheme);
   const [rtl, setRtl] = React.useState<boolean>(I18nManager.isRTL);
 
   React.useEffect(() => {
@@ -161,7 +160,7 @@ export default function PaperExample() {
 
       if (I18nManager.isRTL !== rtl) {
         I18nManager.forceRTL(rtl);
-        Updates.reloadFromCache();
+        Updates.reloadAsync();
       }
     };
 
